@@ -1,3 +1,14 @@
+buildscript {
+    repositories {
+        maven {
+            url "https://mirrors.tencent.com/nexus/repository/maven-public"
+        }
+
+
+
+
+    }
+}
 plugins {
     id "org.sonarqube" version "3.2.0"
     id 'org.asciidoctor.convert' version '1.6.0'
@@ -54,21 +65,21 @@ configure(project.coreProjects) {
 
 
     dependencies {
-        api (libraries.vavr)
-        implementation (libraries.slf4j)
+        api(libraries.vavr)
+        implementation(libraries.slf4j)
 
         // JSR-305 only used for non-required meta-annotations
         compileOnly "com.google.code.findbugs:jsr305:3.0.2"
 
-        testImplementation (libraries.junit)
-        testImplementation (libraries.assertj)
-        testImplementation (libraries.logback)
-        testImplementation (libraries.mockito)
-        testImplementation (libraries.powermock)
-        testImplementation (libraries.powermock_api_mockito)
-        testImplementation (libraries.powermock_module_junit4)
-        testImplementation (libraries.awaitility)
-        testImplementation (libraries.jaxws)
+        testImplementation(libraries.junit)
+        testImplementation(libraries.assertj)
+        testImplementation(libraries.logback)
+        testImplementation(libraries.mockito)
+        testImplementation(libraries.powermock)
+        testImplementation(libraries.powermock_api_mockito)
+        testImplementation(libraries.powermock_module_junit4)
+        testImplementation(libraries.awaitility)
+        testImplementation(libraries.jaxws)
     }
 
     tasks.withType(JavaCompile) {

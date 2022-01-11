@@ -1,3 +1,11 @@
+buildscript {
+    repositories {
+        maven {
+            url "https://mirrors.tencent.com/nexus/repository/maven-public"
+        }
+
+    }
+}
 plugins {
     id 'org.jetbrains.kotlin.jvm' version '1.4.32'
 }
