@@ -44,6 +44,9 @@ import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
 import static org.mockito.Mockito.*;
 
+/**
+ * // TODO: 2022/1/29 测试入口
+ */
 public class CircuitBreakerTest {
 
     private HelloWorldService helloWorldService;

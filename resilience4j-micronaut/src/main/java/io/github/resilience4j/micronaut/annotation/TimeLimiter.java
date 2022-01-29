@@ -23,6 +23,9 @@ import io.micronaut.context.annotation.Type;
 
 import java.lang.annotation.*;
 
+/**
+ * 时间限制器
+ */
 @Retention(value = RetentionPolicy.RUNTIME)
 @Target(value = {ElementType.METHOD, ElementType.TYPE})
 @Around

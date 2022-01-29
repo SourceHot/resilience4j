@@ -48,11 +48,29 @@ import static java.util.concurrent.locks.LockSupport.parkNanos;
  */
 public class AtomicRateLimiter implements RateLimiter {
 
+    /**
+     * 开始时间
+     */
     private final long nanoTimeStart;
+    /**
+     * 名称
+     */
     private final String name;
+    /**
+     * 等待线程数
+     */
     private final AtomicInteger waitingThreads;
+    /**
+     * 状态
+     */
     private final AtomicReference<State> state;
+    /**
+     * 标记信息
+     */
     private final Map<String, String> tags;
+    /**
+     * 速率限制处理器
+     */
     private final RateLimiterEventProcessor eventProcessor;
 
     public AtomicRateLimiter(String name, RateLimiterConfig rateLimiterConfig) {

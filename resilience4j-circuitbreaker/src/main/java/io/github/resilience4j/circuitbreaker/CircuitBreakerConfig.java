@@ -33,6 +33,8 @@ import java.util.function.Predicate;
 
 /**
  * A {@link CircuitBreakerConfig} configures a {@link CircuitBreaker}
+ *
+ * 熔断配置
  */
 public class CircuitBreakerConfig implements Serializable {
 
@@ -62,17 +64,41 @@ public class CircuitBreakerConfig implements Serializable {
 
     private transient Predicate<Object> recordResultPredicate = DEFAULT_RECORD_RESULT_PREDICATE;
 
+    /**
+     * 记录的异常
+     */
     @SuppressWarnings("unchecked")
     private Class<? extends Throwable>[] recordExceptions = new Class[0];
+    /**
+     * 忽略的异常
+     */
     @SuppressWarnings("unchecked")
     private Class<? extends Throwable>[] ignoreExceptions = new Class[0];
 
+    /**
+     * 故障率阈值
+     */
     private float failureRateThreshold = DEFAULT_FAILURE_RATE_THRESHOLD;
+    /**
+     * 半开状态下允许的呼叫数
+     */
     private int permittedNumberOfCallsInHalfOpenState = DEFAULT_PERMITTED_CALLS_IN_HALF_OPEN_STATE;
+    /**
+     * 滑动窗口大小,可以理解为最近n次
+     */
     private int slidingWindowSize = DEFAULT_SLIDING_WINDOW_SIZE;
+    /**
+     * 滑动窗口策略
+     */
     private SlidingWindowType slidingWindowType = DEFAULT_SLIDING_WINDOW_TYPE;
+    /**
+     * 最少通讯次数
+     */
     private int minimumNumberOfCalls = DEFAULT_MINIMUM_NUMBER_OF_CALLS;
     private boolean writableStackTraceEnabled = DEFAULT_WRITABLE_STACK_TRACE_ENABLED;
+    /**
+     * 是否启用从开到半开的自动转换
+     */
     private boolean automaticTransitionFromOpenToHalfOpenEnabled = false;
     private IntervalFunction waitIntervalFunctionInOpenState = IntervalFunction
         .of(Duration.ofSeconds(DEFAULT_WAIT_DURATION_IN_OPEN_STATE));
@@ -188,7 +214,14 @@ public class CircuitBreakerConfig implements Serializable {
     }
 
     public enum SlidingWindowType {
-        TIME_BASED, COUNT_BASED
+        /**
+         * 基于时间
+         */
+        TIME_BASED,
+        /**
+         * 基于次数
+         */
+        COUNT_BASED
     }
 
     @Override

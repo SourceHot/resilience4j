@@ -45,12 +45,15 @@ import java.util.function.Supplier;
  * A RateLimiter distributes permits at a configurable rate. {@link #acquirePermission()} blocks if
  * necessary until a permit is available, and then takes it. Once acquired, permits need not be
  * released.
+ *
+ * 速率限制器
  */
 public interface RateLimiter {
 
     /**
      * Creates a RateLimiter with a custom RateLimiter configuration.
      *
+     * 根据名称和速率限制配置创建速率限制器
      * @param name              the name of the RateLimiter
      * @param rateLimiterConfig a custom RateLimiter configuration
      * @return The {@link RateLimiter}
@@ -99,6 +102,7 @@ public interface RateLimiter {
     /**
      * Creates a RateLimiter with a default RateLimiterConfig configuration.
      *
+     * 创建默认的速率限制器
      * @param name the name of the RateLimiter
      * @return The {@link RateLimiter}
      */

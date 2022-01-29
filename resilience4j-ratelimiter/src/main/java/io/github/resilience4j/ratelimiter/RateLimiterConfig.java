@@ -26,6 +26,9 @@ import java.util.function.Predicate;
 
 import static java.util.Objects.requireNonNull;
 
+/**
+ * 速率限制配置
+ */
 public class RateLimiterConfig implements Serializable {
 
     private static final long serialVersionUID = -1621614587284115957L;

@@ -50,19 +50,47 @@ import static java.time.temporal.ChronoUnit.MILLIS;
 
 /**
  * A CircuitBreaker finite state machine.
+ * 带状态的熔断器
  */
 public final class CircuitBreakerStateMachine implements CircuitBreaker {
 
     private static final Logger LOG = LoggerFactory.getLogger(CircuitBreakerStateMachine.class);
 
+    /**
+     * 名称
+     */
     private final String name;
+    /**
+     * 熔断器状态
+     */
     private final AtomicReference<CircuitBreakerState> stateReference;
+    /**
+     * 熔断器配置
+     */
     private final CircuitBreakerConfig circuitBreakerConfig;
+    /**
+     * 标签
+     */
     private final Map<String, String> tags;
+    /**
+     * 事件处理器
+     */
     private final CircuitBreakerEventProcessor eventProcessor;
+    /**
+     * 时钟类
+     */
     private final Clock clock;
+    /**
+     * 调度器工厂
+     */
     private final SchedulerFactory schedulerFactory;
+    /**
+     * 时间函数，会从熔断器配置中获取
+     */
     private final Function<Clock, Long> currentTimestampFunction;
+    /**
+     * 时间单位
+     */
     private final TimeUnit timestampUnit;
 
     /**
@@ -447,22 +475,51 @@ public final class CircuitBreakerStateMachine implements CircuitBreaker {
         return eventProcessor;
     }
 
+    /**
+     * 熔断器状态
+     */
     private interface CircuitBreakerState {
 
+        /**
+         * 尝试获取
+         */
         boolean tryAcquirePermission();
 
+        /**
+         * 获取许可
+         */
         void acquirePermission();
 
+        /**
+         * 释放许可
+         */
         void releasePermission();
 
+        /**
+         * 异常时进行的操作
+         */
         void onError(long duration, TimeUnit durationUnit, Throwable throwable);
 
+        /**
+         * 成功时进行的操作
+         */
         void onSuccess(long duration, TimeUnit durationUnit);
 
+        /**
+         * 获取重试次数
+         */
         int attempts();
 
+        /**
+         * 获取熔断器状态
+         * @return
+         */
         CircuitBreaker.State getState();
 
+        /**
+         * 获取熔断器指标
+         * @return
+         */
         CircuitBreakerMetrics getMetrics();
 
         /**

@@ -1,5 +1,8 @@
 package io.github.resilience4j.circuitbreaker.utils;
 
+/**
+ * 指标名称集合
+ */
 public class MetricNames {
 
     public static final String DEFAULT_PREFIX = "resilience4j.circuitbreaker";

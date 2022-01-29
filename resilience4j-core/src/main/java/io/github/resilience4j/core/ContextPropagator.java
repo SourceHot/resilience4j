@@ -65,6 +65,7 @@ public interface ContextPropagator<T> {
      * @param <T>        the type of variable that cross thread boundary
      * @return decorated supplier of type T
      */
+    @SuppressWarnings("unchecked")
     static <T> Supplier<T> decorateSupplier(ContextPropagator propagator,
                                             Supplier<T> supplier) {
         final Optional value = (Optional) propagator.retrieve().get();
@@ -86,6 +87,7 @@ public interface ContextPropagator<T> {
      * @param <T>         the type of variable that cross thread boundary
      * @return decorated supplier of type T
      */
+    @SuppressWarnings("unchecked")
     static <T> Supplier<T> decorateSupplier(List<? extends ContextPropagator> propagators,
                                             Supplier<T> supplier) {
 
@@ -117,6 +119,7 @@ public interface ContextPropagator<T> {
      * @param <T>        the type of variable that cross thread boundary
      * @return decorated callable of type T
      */
+    @SuppressWarnings("unchecked")
     static <T> Callable<T> decorateCallable(ContextPropagator propagator, Callable<T> callable) {
         final Optional value = (Optional) propagator.retrieve().get();
         return () -> {
@@ -137,6 +140,7 @@ public interface ContextPropagator<T> {
      * @param <T>         the type of variable that cross thread boundary
      * @return decorated callable of type T
      */
+    @SuppressWarnings("unchecked")
     static <T> Callable<T> decorateCallable(List<? extends ContextPropagator> propagators,
                                             Callable<T> callable) {
 
@@ -168,6 +172,7 @@ public interface ContextPropagator<T> {
      * @param <T>         the type of variable that cross thread boundary
      * @return decorated supplier of type T
      */
+    @SuppressWarnings("unchecked")
     static <T> Runnable decorateRunnable(List<? extends ContextPropagator> propagators,
                                          Runnable runnable) {
         Objects.requireNonNull(propagators, "ContextPropagator list should be non null");
@@ -198,6 +203,7 @@ public interface ContextPropagator<T> {
      * @param <T>        the type of variable that cross thread boundary
      * @return decorated supplier of type T
      */
+    @SuppressWarnings("unchecked")
     static <T> Runnable decorateRunnable(ContextPropagator propagator,
                                          Runnable runnable) {
         final Optional value = (Optional) propagator.retrieve().get();

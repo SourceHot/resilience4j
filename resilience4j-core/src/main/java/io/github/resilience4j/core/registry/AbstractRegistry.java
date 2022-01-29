@@ -32,6 +32,7 @@ import java.util.function.Supplier;
 
 /**
  * Abstract registry to be shared with all resilience4j registries
+ * 注册器抽象类
  */
 public class AbstractRegistry<E, C> implements Registry<E, C> {
 
@@ -45,6 +46,10 @@ public class AbstractRegistry<E, C> implements Registry<E, C> {
 
     protected final RegistryStore<E> entryMap;
 
+    /**
+     * key: 名称
+     * value: 配置
+     */
     protected final ConcurrentMap<String, C> configurations;
     /**
      * Global tags which must be added to each instance created by this registry.

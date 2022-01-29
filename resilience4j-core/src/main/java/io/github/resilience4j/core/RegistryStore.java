@@ -20,19 +20,56 @@ import java.util.Collection;
 import java.util.Optional;
 import java.util.function.Function;
 
+/**
+ * 注册表存储对象
+ * @param <E>
+ */
 public interface RegistryStore<E> {
 
+
+    /**
+     * 向存储容器中设置数据
+     * @param key
+     * @param mappingFunction
+     * @return
+     */
     E computeIfAbsent(String key,
         Function<? super String, ? extends E> mappingFunction);
 
+    /**
+     * 向存储容器中设置数据
+     * @param key
+     * @param value
+     * @return
+     */
     E putIfAbsent(String key, E value);
 
+    /**
+     * 根据key搜索E
+     * @param key
+     * @return
+     */
     Optional<E> find(String key);
 
+    /**
+     * 根据名称移除E
+     * @param name
+     * @return
+     */
     Optional<E> remove(String name);
 
+    /**
+     * 根据名称替换E
+     * @param name
+     * @param newEntry
+     * @return
+     */
     Optional<E> replace(String name, E newEntry);
 
+    /**
+     * 获取所有E
+     * @return
+     */
     Collection<E> values();
 
 }

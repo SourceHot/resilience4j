@@ -31,6 +31,7 @@ import java.util.function.Supplier;
 
 /**
  * Manages all RateLimiter instances.
+ * 速率限制器注册表
  */
 public interface RateLimiterRegistry extends Registry<RateLimiter, RateLimiterConfig> {
 

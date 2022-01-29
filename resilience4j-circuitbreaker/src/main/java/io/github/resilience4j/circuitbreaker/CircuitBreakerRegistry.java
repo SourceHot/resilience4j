@@ -34,6 +34,8 @@ import java.util.function.Supplier;
 /**
  * The {@link CircuitBreakerRegistry} is a factory to create CircuitBreaker instances which stores
  * all CircuitBreaker instances in a registry.
+ *
+ * 熔断实例注册器
  */
 public interface CircuitBreakerRegistry extends Registry<CircuitBreaker, CircuitBreakerConfig> {
 
@@ -156,6 +158,7 @@ public interface CircuitBreakerRegistry extends Registry<CircuitBreaker, Circuit
     /**
      * Returns all managed {@link CircuitBreaker} instances.
      *
+     * 获取所有熔断器
      * @return all managed {@link CircuitBreaker} instances.
      */
     Seq<CircuitBreaker> getAllCircuitBreakers();
@@ -164,6 +167,7 @@ public interface CircuitBreakerRegistry extends Registry<CircuitBreaker, Circuit
      * Returns a managed {@link CircuitBreaker} or creates a new one with the default CircuitBreaker
      * configuration.
      *
+     * 根据名称获取熔断器
      * @param name the name of the CircuitBreaker
      * @return The {@link CircuitBreaker}
      */
@@ -177,6 +181,7 @@ public interface CircuitBreakerRegistry extends Registry<CircuitBreaker, Circuit
      * When tags (keys) of the two collide the tags passed with this method will override the tags
      * of the registry.
      *
+     * 根据名称和标签获取熔断器
      * @param name the name of the CircuitBreaker
      * @param tags tags added to the CircuitBreaker
      * @return The {@link CircuitBreaker}
@@ -187,6 +192,7 @@ public interface CircuitBreakerRegistry extends Registry<CircuitBreaker, Circuit
      * Returns a managed {@link CircuitBreaker} or creates a new one with a custom CircuitBreaker
      * configuration.
      *
+     * 根据名称和熔断配置获取熔断器
      * @param name   the name of the CircuitBreaker
      * @param config a custom CircuitBreaker configuration
      * @return The {@link CircuitBreaker}
@@ -200,7 +206,7 @@ public interface CircuitBreakerRegistry extends Registry<CircuitBreaker, Circuit
      * The {@code tags} passed will be appended to the tags already configured for the registry.
      * When tags (keys) of the two collide the tags passed with this method will override the tags
      * of the registry.
-     *
+     *根据名称、熔断配置和标签获取熔断器
      * @param name   the name of the CircuitBreaker
      * @param config a custom CircuitBreaker configuration
      * @param tags   tags added to the CircuitBreaker
@@ -213,6 +219,7 @@ public interface CircuitBreakerRegistry extends Registry<CircuitBreaker, Circuit
      * Returns a managed {@link CircuitBreaker} or creates a new one.
      * The configuration must have been added upfront via {@link #addConfiguration(String, Object)}.
      *
+     * 根据名称和配置名称获取熔断器
      * @param name       the name of the CircuitBreaker
      * @param configName the name of the shared configuration
      * @return The {@link CircuitBreaker}
@@ -226,7 +233,7 @@ public interface CircuitBreakerRegistry extends Registry<CircuitBreaker, Circuit
      * The {@code tags} passed will be appended to the tags already configured for the registry.
      * When tags (keys) of the two collide the tags passed with this method will override the tags
      * of the registry.
-     *
+     * 根据名称、配置名称和标签获取熔断器
      * @param name       the name of the CircuitBreaker
      * @param configName the name of the shared configuration
      * @param tags       tags added to the CircuitBreaker

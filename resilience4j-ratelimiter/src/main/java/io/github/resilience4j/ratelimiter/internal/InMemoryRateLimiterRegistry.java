@@ -38,6 +38,8 @@ import java.util.function.Supplier;
 
 /**
  * Backend RateLimiter manager. Constructs backend RateLimiters according to configuration values.
+ *
+ * 基于内存的速率限制注册表
  */
 public class InMemoryRateLimiterRegistry extends
     AbstractRegistry<RateLimiter, RateLimiterConfig> implements RateLimiterRegistry {

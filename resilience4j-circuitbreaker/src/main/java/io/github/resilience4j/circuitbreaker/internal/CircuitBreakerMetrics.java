@@ -32,6 +32,9 @@ import java.util.concurrent.atomic.LongAdder;
 
 import static io.github.resilience4j.core.metrics.Metrics.Outcome;
 
+/**
+ * 熔断器指标
+ */
 class CircuitBreakerMetrics implements CircuitBreaker.Metrics {
 
     private final Metrics metrics;

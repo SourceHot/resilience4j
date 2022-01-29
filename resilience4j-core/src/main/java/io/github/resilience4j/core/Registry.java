@@ -28,19 +28,25 @@ import java.util.Optional;
 
 /**
  * root resilience4j registry to be used by resilience types registries for common functionality
+ *
+ * 注册器
+ * @param <E>  注册接口
+ * @param <C> 配置对象
  */
 public interface Registry<E, C> {
 
     /**
      * Adds a configuration to the registry
      *
-     * @param configName    the configuration name
-     * @param configuration the added configuration
+     * 添加配置
+     * @param configName    the configuration name 配置名称
+     * @param configuration the added configuration 配置对象
      */
     void addConfiguration(String configName, C configuration);
 
     /**
      * Find a named entry in the Registry
+     * 根据名称搜索E
      *
      * @param name the  name
      */
@@ -49,6 +55,7 @@ public interface Registry<E, C> {
     /**
      * Remove an entry from the Registry
      *
+     * 根据名称移除E
      * @param name the  name
      */
     Optional<E> remove(String name);
@@ -56,6 +63,7 @@ public interface Registry<E, C> {
     /**
      * Replace an existing entry in the Registry by a new one.
      *
+     * 根据名称替换E
      * @param name     the existing name
      * @param newEntry a new entry
      */
@@ -63,7 +71,7 @@ public interface Registry<E, C> {
 
     /**
      * Get a configuration by name
-     *
+     * 根名称获取配置
      * @param configName the configuration name
      * @return the found configuration if any
      */
@@ -72,17 +80,21 @@ public interface Registry<E, C> {
     /**
      * Get the default configuration
      *
+     * 获取默认配置
      * @return the default configuration
      */
     C getDefaultConfig();
 
     /**
+     * 获取全局标签
      * @return global configured registry tags
      */
     Map<String, String> getTags();
 
     /**
      * Returns an EventPublisher which can be used to register event consumers.
+     *
+     * 获取事件推送器
      *
      * @return an EventPublisher
      */
@@ -93,10 +105,25 @@ public interface Registry<E, C> {
      */
     interface EventPublisher<E> extends io.github.resilience4j.core.EventPublisher<RegistryEvent> {
 
+        /**
+         * 在添加时执行的行为
+         * @param eventConsumer
+         * @return
+         */
         EventPublisher<E> onEntryAdded(EventConsumer<EntryAddedEvent<E>> eventConsumer);
 
+        /**
+         * 在移除时执行的行为
+         * @param eventConsumer
+         * @return
+         */
         EventPublisher<E> onEntryRemoved(EventConsumer<EntryRemovedEvent<E>> eventConsumer);
 
+        /**
+         * 在替换时执行的行为
+         * @param eventConsumer
+         * @return
+         */
         EventPublisher<E> onEntryReplaced(EventConsumer<EntryReplacedEvent<E>> eventConsumer);
     }
 }

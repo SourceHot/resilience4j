@@ -53,6 +53,8 @@ import java.util.stream.Collectors;
  * allows a number of calls to see if the backend is still unavailable or has become available
  * again. If the failure rate is greater than or equal to the configured threshold, the state changes back to OPEN.
  * If the failure rate is below or equal to the threshold, the state changes back to CLOSED.
+ *
+ * 熔断器
  */
 public interface CircuitBreaker {
 
@@ -158,6 +160,7 @@ public interface CircuitBreaker {
     /**
      * Returns a callable which is decorated by a CircuitBreaker.
      *
+     * 返回装饰过的CircuitBreaker类
      * @param circuitBreaker the CircuitBreaker
      * @param callable       the original Callable
      * @param <T>            the result type of callable
@@ -165,16 +168,23 @@ public interface CircuitBreaker {
      */
     static <T> Callable<T> decorateCallable(CircuitBreaker circuitBreaker, Callable<T> callable) {
         return () -> {
+            // 获取许可
             circuitBreaker.acquirePermission();
+            // 获取开始时间
             final long start = circuitBreaker.getCurrentTimestamp();
             try {
+                // 执行实际需要处理的业务
                 T result = callable.call();
+                // 获取时间差
                 long duration = circuitBreaker.getCurrentTimestamp() - start;
+                // 处理成功状态
                 circuitBreaker.onResult(duration, circuitBreaker.getTimestampUnit(), result);
                 return result;
             } catch (Exception exception) {
                 // Do not handle java.lang.Error
+                // 获取时间差
                 long duration = circuitBreaker.getCurrentTimestamp() - start;
+                // 处理失败状态
                 circuitBreaker.onError(duration, circuitBreaker.getTimestampUnit(), exception);
                 throw exception;
             }
@@ -901,33 +911,41 @@ public interface CircuitBreaker {
 
     /**
      * States of the CircuitBreaker state machine.
+     *
+     * 熔断器状态
      */
     enum State {
         /**
          * A DISABLED breaker is not operating (no state transition, no events) and allowing all
          * requests through.
+         * 未开启
          */
         DISABLED(3, false),
         /**
          * A METRICS_ONLY breaker is collecting metrics, publishing events and allowing all requests
          * through but is not transitioning to other states.
+         * 监控状态，允许所有请求通过并且不会对状态进行修改
          */
         METRICS_ONLY(5, true),
         /**
          * A CLOSED breaker is operating normally and allowing requests through.
+         * 关闭状态
          */
         CLOSED(0, true),
         /**
          * An OPEN breaker has tripped and will not allow requests through.
+         * 开启状态
          */
         OPEN(1, true),
         /**
          * A FORCED_OPEN breaker is not operating (no state transition, no events) and not allowing
          * any requests through.
+         * 熔断器不运行
          */
         FORCED_OPEN(4, false),
         /**
          * A HALF_OPEN breaker has completed its wait interval and will allow requests
+         * 半开状态。在OPEN状态下持续一段时间后会进入半开状态，如果在半开状态下有异常则会进入关闭状态
          */
         HALF_OPEN(2, true);
 
@@ -957,6 +975,8 @@ public interface CircuitBreaker {
 
     /**
      * State transitions of the CircuitBreaker state machine.
+     *
+     * 状态转换
      */
     enum StateTransition {
         CLOSED_TO_CLOSED(State.CLOSED, State.CLOSED),
@@ -1034,6 +1054,8 @@ public interface CircuitBreaker {
 
     /**
      * An EventPublisher can be used to register event consumers.
+     *
+     * 事件推送器
      */
     interface EventPublisher extends
         io.github.resilience4j.core.EventPublisher<CircuitBreakerEvent> {
@@ -1060,6 +1082,9 @@ public interface CircuitBreaker {
             EventConsumer<CircuitBreakerOnSlowCallRateExceededEvent> eventConsumer);
     }
 
+    /**
+     * 监控接口
+     */
     interface Metrics {
 
         /**

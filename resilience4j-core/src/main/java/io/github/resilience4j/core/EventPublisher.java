@@ -17,6 +17,7 @@ package io.github.resilience4j.core;
  *  limitations under the License.
  *
  *
+ * 事件处理器
  */
 public interface EventPublisher<T> {
 
