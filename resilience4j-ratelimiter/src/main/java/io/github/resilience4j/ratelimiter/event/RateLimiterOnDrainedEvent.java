@@ -18,6 +18,9 @@
  */
 package io.github.resilience4j.ratelimiter.event;
 
+/**
+ * 耗尽事件
+ */
 public class RateLimiterOnDrainedEvent extends AbstractRateLimiterEvent {
 
     public RateLimiterOnDrainedEvent(String rateLimiterName, int numberOfPermits) {

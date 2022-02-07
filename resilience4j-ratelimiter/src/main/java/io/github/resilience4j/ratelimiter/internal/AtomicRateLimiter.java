@@ -57,7 +57,7 @@ public class AtomicRateLimiter implements RateLimiter {
      */
     private final String name;
     /**
-     * 等待线程数
+     * 等待线程数，等待获取令牌的线程数
      */
     private final AtomicInteger waitingThreads;
     /**
@@ -69,7 +69,7 @@ public class AtomicRateLimiter implements RateLimiter {
      */
     private final Map<String, String> tags;
     /**
-     * 速率限制处理器
+     * 事件处理器
      */
     private final RateLimiterEventProcessor eventProcessor;
 
@@ -134,9 +134,13 @@ public class AtomicRateLimiter implements RateLimiter {
      */
     @Override
     public boolean acquirePermission(final int permits) {
+        // 获取超时时间
         long timeoutInNanos = state.get().config.getTimeoutDuration().toNanos();
+        // 状态更新
         State modifiedState = updateStateWithBackOff(permits, timeoutInNanos);
+        // 确认是否需要等待
         boolean result = waitForPermissionIfNecessary(timeoutInNanos, modifiedState.nanosToWait);
+        // 发布速率限制器采集事件
         publishRateLimiterAcquisitionEvent(result, permits);
         return result;
     }
@@ -194,9 +198,13 @@ public class AtomicRateLimiter implements RateLimiter {
         AtomicRateLimiter.State prev;
         AtomicRateLimiter.State next;
         do {
+            // 获取当前状态
             prev = state.get();
+            // 计算下一个状态
             next = calculateNextState(permits, timeoutInNanos, prev);
-        } while (!compareAndSet(prev, next));
+        }
+        // 循环条件：当前状态和下一个状态不相同
+        while (!compareAndSet(prev, next));
         return next;
     }
 
@@ -234,27 +242,42 @@ public class AtomicRateLimiter implements RateLimiter {
      */
     private State calculateNextState(final int permits, final long timeoutInNanos,
                                      final State activeState) {
+        // 获取刷新周期
         long cyclePeriodInNanos = activeState.config.getLimitRefreshPeriod().toNanos();
+        // 周期内令牌最大使用次数
         int permissionsPerCycle = activeState.config.getLimitForPeriod();
 
+        // 获取限流器到当前时间经过的纳秒数
         long currentNanos = currentNanoTime();
+        // 计算周期号，经过时间除以刷新周期
         long currentCycle = currentNanos / cyclePeriodInNanos;
 
+        // 当前周期号
         long nextCycle = activeState.activeCycle;
+        // 令牌数
         int nextPermissions = activeState.activePermissions;
+        // 判断当前周期号是否和前面计算的周期号相同
         if (nextCycle != currentCycle) {
+            // 周期号差值
             long elapsedCycles = currentCycle - nextCycle;
+            // 周期号差值乘令牌数 = 预占令牌数量
             long accumulatedPermissions = elapsedCycles * permissionsPerCycle;
+            // 设置下一个周期号
             nextCycle = currentCycle;
+            // 计算新的所需令牌数量，计算规则：预占令牌数量+历史令牌数 和 原有令牌数的最小值
             nextPermissions = (int) min(nextPermissions + accumulatedPermissions,
                 permissionsPerCycle);
         }
+        // 计算获取下一个令牌所需的等待时间
         long nextNanosToWait = nanosToWaitForPermission(
             permits, cyclePeriodInNanos, permissionsPerCycle, nextPermissions, currentNanos,
             currentCycle
         );
-        State nextState = reservePermissions(activeState.config, permits, timeoutInNanos, nextCycle,
+        // 计算新的状态
+        State nextState = reservePermissions(
+            activeState.config, permits, timeoutInNanos, nextCycle,
             nextPermissions, nextNanosToWait);
+        // 返回新的状态
         return nextState;
     }
 
@@ -262,13 +285,19 @@ public class AtomicRateLimiter implements RateLimiter {
      * Calculates time to wait for the required permits of permissions to get accumulated
      *
      * @param permits              permits of required permissions
+     *                             所需令牌数量
      * @param cyclePeriodInNanos   current configuration values
+     *                             刷新周期
      * @param permissionsPerCycle  current configuration values
+     *                             周期内令牌最大使用次数
      * @param availablePermissions currently available permissions, can be negative if some
      *                             permissions have been reserved
+     *                             下一个周期所需令牌数量
      * @param currentNanos         current time in nanoseconds
+     *                             时间差
      * @param currentCycle         current {@link AtomicRateLimiter} cycle    @return nanoseconds to
      *                             wait for the next permission
+     *                             周期号
      */
     private long nanosToWaitForPermission(final int permits, final long cyclePeriodInNanos,
                                           final int permissionsPerCycle,
@@ -298,7 +327,7 @@ public class AtomicRateLimiter implements RateLimiter {
      * corresponding {@link State}. Reserves permissions only if caller can successfully wait for
      * permission.
      *
-     * @param config
+     * @param config          限流器配置
      * @param permits        permits of permissions
      * @param timeoutInNanos max time that caller can wait for permission in nanoseconds
      * @param cycle          cycle for new {@link State}
@@ -322,7 +351,9 @@ public class AtomicRateLimiter implements RateLimiter {
      * longer then timeoutInNanos.
      *
      * @param timeoutInNanos max time that caller can wait
+     *                       最大等待时间
      * @param nanosToWait    nanoseconds caller need to wait
+     *                       所需等待时间
      * @return true if caller was able to wait for nanosToWait without {@link Thread#interrupt} and
      * not exceed timeout
      */
@@ -351,16 +382,26 @@ public class AtomicRateLimiter implements RateLimiter {
      * @return true if caller was not {@link Thread#interrupted} while waiting
      */
     private boolean waitForPermission(final long nanosToWait) {
+        // 等待线程数加一
         waitingThreads.incrementAndGet();
+        // 最后的时间，时间差+超时时间
         long deadline = currentNanoTime() + nanosToWait;
+        // 是否中断标记
         boolean wasInterrupted = false;
+        // 如果时间差小于最后时间并且中断标记为真
         while (currentNanoTime() < deadline && !wasInterrupted) {
+            // 计算等待时间
             long sleepBlockDuration = deadline - currentNanoTime();
+            // 等待一定时间
             parkNanos(sleepBlockDuration);
+            // 判断是否中断
             wasInterrupted = Thread.interrupted();
         }
+        // 等待线程数减一
         waitingThreads.decrementAndGet();
+        // 如果中断
         if (wasInterrupted) {
+            // 中断当前线程
             currentThread().interrupt();
         }
         return !wasInterrupted;
@@ -448,10 +489,22 @@ public class AtomicRateLimiter implements RateLimiter {
      */
     private static class State {
 
+        /**
+         * 限流器配置
+         */
         private final RateLimiterConfig config;
 
+        /**
+         * 周期编号
+         */
         private final long activeCycle;
+        /**
+         * 当前周期下的令牌数量
+         */
         private final int activePermissions;
+        /**
+         * 获取下一个令牌需要等待的时间
+         */
         private final long nanosToWait;
 
         private State(RateLimiterConfig config,

@@ -38,8 +38,17 @@ public class RateLimiterConfig implements Serializable {
     private static final Duration ACCEPTABLE_REFRESH_PERIOD = Duration.ofNanos(1L);
     private static final boolean DEFAULT_WRITABLE_STACK_TRACE_ENABLED = true;
 
+    /**
+     * 超时时间
+     */
     private final Duration timeoutDuration;
+    /**
+     * 刷新周期
+      */
     private final Duration limitRefreshPeriod;
+    /**
+     * 周期内最大使用次数
+     */
     private final int limitForPeriod;
     private final Predicate<Either<? extends Throwable, ?>> drainPermissionsOnResult;
     private final boolean writableStackTraceEnabled;

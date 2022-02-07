@@ -18,6 +18,9 @@
  */
 package io.github.resilience4j.ratelimiter.event;
 
+/**
+ * 限速器失败事件
+ */
 public class RateLimiterOnFailureEvent extends AbstractRateLimiterEvent {
 
     public RateLimiterOnFailureEvent(String rateLimiterName) {

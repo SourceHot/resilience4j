@@ -568,6 +568,7 @@ public interface RateLimiter {
     /**
      * Will wait for permission within default timeout duration.
      *
+     * 等待许可
      * @param rateLimiter the RateLimiter to get permission from
      * @throws RequestNotPermitted                 if waiting time elapsed before a permit was
      *                                             acquired.
@@ -579,6 +580,7 @@ public interface RateLimiter {
 
     /**
      * Will wait for required number of permits within default timeout duration.
+     *
      *
      * @param rateLimiter the RateLimiter to get permission from
      * @param permits     number of permits we have to acquire
@@ -668,12 +670,14 @@ public interface RateLimiter {
      * @return {@code true} if a permit was acquired and {@code false} if waiting timeoutDuration
      * elapsed before a permit was acquired
      */
+    //      * 从当前限流器中获取给定数量的令牌，这是一个阻塞操作，阻塞到获取令牌成功或者线程中断
     boolean acquirePermission(int permits);
 
     /**
      * Reserves a permission from this rate limiter and returns nanoseconds you should wait for it.
      * If returned long is negative, it means that you failed to reserve permission, possibly your
      * {@link RateLimiterConfig#getTimeoutDuration()} is less then time to wait for permission.
+     *
      *
      * @return {@code long} amount of nanoseconds you should wait for reserved permissions. if
      * negative, it means you failed to reserve.
@@ -688,6 +692,7 @@ public interface RateLimiter {
      * possibly your  {@link RateLimiterConfig#getTimeoutDuration()} is less then time to wait for
      * permission.
      *
+     * 获取给定数量的令牌，返回值为线程等待时间，如果返回值为负数则表示获取失败
      * @param permits number of permits - use for systems where 1 call != 1 permit
      * @return {@code long} amount of nanoseconds you should wait for reserved permissions. if
      * negative, it means you failed to reserve.
@@ -696,6 +701,8 @@ public interface RateLimiter {
 
     /**
      * Drains all the permits left in the current period.
+     *
+     * 丢弃当前周期内的所有令牌
      */
     void drainPermissions();
 
