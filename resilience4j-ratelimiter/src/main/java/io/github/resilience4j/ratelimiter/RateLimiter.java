@@ -568,7 +568,7 @@ public interface RateLimiter {
     /**
      * Will wait for permission within default timeout duration.
      *
-     * 等待许可
+     * 等待令牌
      * @param rateLimiter the RateLimiter to get permission from
      * @throws RequestNotPermitted                 if waiting time elapsed before a permit was
      *                                             acquired.

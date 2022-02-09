@@ -481,17 +481,17 @@ public final class CircuitBreakerStateMachine implements CircuitBreaker {
     private interface CircuitBreakerState {
 
         /**
-         * 尝试获取
+         * 尝试获取令牌
          */
         boolean tryAcquirePermission();
 
         /**
-         * 获取许可
+         * 获取令牌
          */
         void acquirePermission();
 
         /**
-         * 释放许可
+         * 释放令牌
          */
         void releasePermission();
 
@@ -1044,9 +1044,21 @@ public final class CircuitBreakerStateMachine implements CircuitBreaker {
 
     private class HalfOpenState implements CircuitBreakerState {
 
+        /**
+         * 允许通过次数
+         */
         private final AtomicInteger permittedNumberOfCalls;
+        /**
+         * 是否半开
+         */
         private final AtomicBoolean isHalfOpen;
+        /**
+         * 尝试次数
+         */
         private final int attempts;
+        /**
+         * 监控相关
+         */
         private final CircuitBreakerMetrics circuitBreakerMetrics;
         @Nullable
         private final ScheduledFuture<?> transitionToOpenFuture;

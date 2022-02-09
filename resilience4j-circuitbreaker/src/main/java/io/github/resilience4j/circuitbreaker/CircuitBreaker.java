@@ -53,7 +53,7 @@ import java.util.stream.Collectors;
  * allows a number of calls to see if the backend is still unavailable or has become available
  * again. If the failure rate is greater than or equal to the configured threshold, the state changes back to OPEN.
  * If the failure rate is below or equal to the threshold, the state changes back to CLOSED.
- *
+ * <p>
  * 熔断器
  */
 public interface CircuitBreaker {
@@ -67,7 +67,7 @@ public interface CircuitBreaker {
      * @return a supplier which is decorated by a CircuitBreaker.
      */
     static <T> CheckedFunction0<T> decorateCheckedSupplier(CircuitBreaker circuitBreaker,
-        CheckedFunction0<T> supplier) {
+                                                           CheckedFunction0<T> supplier) {
         return () -> {
             circuitBreaker.acquirePermission();
             final long start = circuitBreaker.getCurrentTimestamp();
@@ -140,7 +140,7 @@ public interface CircuitBreaker {
      * @return a runnable which is decorated by a CircuitBreaker.
      */
     static CheckedRunnable decorateCheckedRunnable(CircuitBreaker circuitBreaker,
-        CheckedRunnable runnable) {
+                                                   CheckedRunnable runnable) {
         return () -> {
             circuitBreaker.acquirePermission();
             final long start = circuitBreaker.getCurrentTimestamp();
@@ -159,8 +159,9 @@ public interface CircuitBreaker {
 
     /**
      * Returns a callable which is decorated by a CircuitBreaker.
-     *
+     * <p>
      * 返回装饰过的CircuitBreaker类
+     *
      * @param circuitBreaker the CircuitBreaker
      * @param callable       the original Callable
      * @param <T>            the result type of callable
@@ -168,7 +169,7 @@ public interface CircuitBreaker {
      */
     static <T> Callable<T> decorateCallable(CircuitBreaker circuitBreaker, Callable<T> callable) {
         return () -> {
-            // 获取许可
+            // 获取令牌
             circuitBreaker.acquirePermission();
             // 获取开始时间
             final long start = circuitBreaker.getCurrentTimestamp();
@@ -226,7 +227,7 @@ public interface CircuitBreaker {
      * @return a supplier which is decorated by a CircuitBreaker.
      */
     static <T> Supplier<Either<Exception, T>> decorateEitherSupplier(CircuitBreaker circuitBreaker,
-        Supplier<Either<? extends Exception, T>> supplier) {
+                                                                     Supplier<Either<? extends Exception, T>> supplier) {
         return () -> {
             if (circuitBreaker.tryAcquirePermission()) {
                 final long start = circuitBreaker.getCurrentTimestamp();
@@ -255,7 +256,7 @@ public interface CircuitBreaker {
      * @return a retryable function
      */
     static <T> Supplier<Try<T>> decorateTrySupplier(CircuitBreaker circuitBreaker,
-        Supplier<Try<T>> supplier) {
+                                                    Supplier<Try<T>> supplier) {
         return () -> {
             if (circuitBreaker.tryAcquirePermission()) {
                 final long start = circuitBreaker.getCurrentTimestamp();
@@ -309,7 +310,7 @@ public interface CircuitBreaker {
      * @return a consumer which is decorated by a CircuitBreaker.
      */
     static <T> CheckedConsumer<T> decorateCheckedConsumer(CircuitBreaker circuitBreaker,
-        CheckedConsumer<T> consumer) {
+                                                          CheckedConsumer<T> consumer) {
         return (t) -> {
             circuitBreaker.acquirePermission();
             final long start = circuitBreaker.getCurrentTimestamp();
@@ -360,7 +361,7 @@ public interface CircuitBreaker {
      * @return a function which is decorated by a CircuitBreaker.
      */
     static <T, R> Function<T, R> decorateFunction(CircuitBreaker circuitBreaker,
-        Function<T, R> function) {
+                                                  Function<T, R> function) {
         return (T t) -> {
             circuitBreaker.acquirePermission();
             final long start = circuitBreaker.getCurrentTimestamp();
@@ -388,7 +389,7 @@ public interface CircuitBreaker {
      * @return a function which is decorated by a CircuitBreaker.
      */
     static <T, R> CheckedFunction1<T, R> decorateCheckedFunction(CircuitBreaker circuitBreaker,
-        CheckedFunction1<T, R> function) {
+                                                                 CheckedFunction1<T, R> function) {
         return (T t) -> {
             circuitBreaker.acquirePermission();
             final long start = circuitBreaker.getCurrentTimestamp();
@@ -440,7 +441,7 @@ public interface CircuitBreaker {
      * @return a CircuitBreaker with a custom CircuitBreaker configuration.
      */
     static CircuitBreaker of(String name, CircuitBreakerConfig circuitBreakerConfig,
-        io.vavr.collection.Map<String, String> tags) {
+                             io.vavr.collection.Map<String, String> tags) {
         return new CircuitBreakerStateMachine(name, circuitBreakerConfig, tags);
     }
 
@@ -452,7 +453,7 @@ public interface CircuitBreaker {
      * @return a CircuitBreaker with a custom CircuitBreaker configuration.
      */
     static CircuitBreaker of(String name,
-        Supplier<CircuitBreakerConfig> circuitBreakerConfigSupplier) {
+                             Supplier<CircuitBreakerConfig> circuitBreakerConfigSupplier) {
         return new CircuitBreakerStateMachine(name, circuitBreakerConfigSupplier);
     }
 
@@ -469,8 +470,8 @@ public interface CircuitBreaker {
      * @return a CircuitBreaker with a custom CircuitBreaker configuration.
      */
     static CircuitBreaker of(String name,
-        Supplier<CircuitBreakerConfig> circuitBreakerConfigSupplier,
-        io.vavr.collection.Map<String, String> tags) {
+                             Supplier<CircuitBreakerConfig> circuitBreakerConfigSupplier,
+                             io.vavr.collection.Map<String, String> tags) {
         return new CircuitBreakerStateMachine(name, circuitBreakerConfigSupplier, tags);
     }
 
@@ -485,7 +486,7 @@ public interface CircuitBreaker {
      * @return a supplier which is decorated by a CircuitBreaker.
      */
     static <T> Supplier<Future<T>> decorateFuture(CircuitBreaker circuitBreaker,
-        Supplier<Future<T>> supplier) {
+                                                  Supplier<Future<T>> supplier) {
         return () -> {
             if (!circuitBreaker.tryAcquirePermission()) {
                 CompletableFuture<T> promise = new CompletableFuture<>();
@@ -515,6 +516,8 @@ public interface CircuitBreaker {
      * the state is HALF_OPEN, the number of allowed test calls is decreased. Important: Make sure
      * to call onSuccess or onError after the call is finished. If the call is cancelled before it
      * is invoked, you have to release the permission again.
+     * <p>
+     * 尝试获取令牌
      *
      * @return {@code true} if a permission was acquired and {@code false} otherwise
      */
@@ -522,6 +525,8 @@ public interface CircuitBreaker {
 
     /**
      * Releases a permission.
+     *
+     * 释放令牌
      * <p>
      * Should only be used when a permission was acquired but not used. Otherwise use {@link
      * CircuitBreaker#onSuccess(long, TimeUnit)} or
@@ -541,6 +546,16 @@ public interface CircuitBreaker {
      * test calls has been reached. If the state is HALF_OPEN, the number of allowed test calls is
      * decreased. Important: Make sure to call onSuccess or onError after the call is finished. If
      * the call is cancelled before it is invoked, you have to release the permission again.
+     * <p>
+     * <p>
+     *     获取令牌
+     * <p>
+     * 尝试获取执行调用的权限。 如果不允许呼叫，则增加不允许呼叫的数量。
+     * 当状态为 OPEN 或 FORCED_OPEN 时引发 CallNotPermittedException。
+     * 当状态为 CLOSED 或 DISABLED 时返回。 当状态为 HALF_OPEN 并且允许进一步的测试调用时返回。
+     * 当状态为 HALF_OPEN 并且已达到测试调用次数时，抛出 CallNotPermittedException。
+     * 如果状态为 HALF_OPEN，则减少允许的测试调用次数。
+     * 重要提示：确保在调用完成后调用 onSuccess 或 onError。 如果调用在调用之前被取消，则必须再次释放权限
      *
      * @throws CallNotPermittedException when CircuitBreaker is OPEN or HALF_OPEN and no further
      *                                   test calls are permitted.
@@ -911,7 +926,7 @@ public interface CircuitBreaker {
 
     /**
      * States of the CircuitBreaker state machine.
-     *
+     * <p>
      * 熔断器状态
      */
     enum State {
@@ -940,7 +955,7 @@ public interface CircuitBreaker {
         /**
          * A FORCED_OPEN breaker is not operating (no state transition, no events) and not allowing
          * any requests through.
-         * 熔断器不运行
+         * 熔断器没有运行
          */
         FORCED_OPEN(4, false),
         /**
@@ -975,7 +990,7 @@ public interface CircuitBreaker {
 
     /**
      * State transitions of the CircuitBreaker state machine.
-     *
+     * <p>
      * 状态转换
      */
     enum StateTransition {
@@ -1025,13 +1040,17 @@ public interface CircuitBreaker {
         }
 
         public static StateTransition transitionBetween(String name, State fromState,
-            State toState) {
+                                                        State toState) {
             final StateTransition stateTransition = STATE_TRANSITION_MAP
                 .get(Tuple.of(fromState, toState));
             if (stateTransition == null) {
                 throw new IllegalStateTransitionException(name, fromState, toState);
             }
             return stateTransition;
+        }
+
+        public static boolean isInternalTransition(final StateTransition transition) {
+            return transition.getToState() == transition.getFromState();
         }
 
         public State getFromState() {
@@ -1042,10 +1061,6 @@ public interface CircuitBreaker {
             return toState;
         }
 
-        public static boolean isInternalTransition(final StateTransition transition) {
-            return transition.getToState() == transition.getFromState();
-        }
-
         @Override
         public String toString() {
             return String.format("State transition from %s to %s", fromState, toState);
@@ -1054,7 +1069,7 @@ public interface CircuitBreaker {
 
     /**
      * An EventPublisher can be used to register event consumers.
-     *
+     * <p>
      * 事件推送器
      */
     interface EventPublisher extends
@@ -1222,7 +1237,7 @@ public interface CircuitBreaker {
                 T v = future.get(timeout, unit);
                 onceToCircuitbreaker
                     .applyOnce(cb ->
-                        cb.onResult(cb.getCurrentTimestamp()  - start, cb.getTimestampUnit(), v)
+                        cb.onResult(cb.getCurrentTimestamp() - start, cb.getTimestampUnit(), v)
                     );
                 return v;
             } catch (CancellationException | InterruptedException e) {
