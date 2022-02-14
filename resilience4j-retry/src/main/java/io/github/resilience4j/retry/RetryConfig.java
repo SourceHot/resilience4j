@@ -51,6 +51,9 @@ public class RetryConfig implements Serializable {
     @Nullable
     private Predicate retryOnResultPredicate;
 
+    /**
+     * 最大重试次数
+     */
     private int maxAttempts = DEFAULT_MAX_ATTEMPTS;
     private boolean failAfterMaxAttempts = false;
     private boolean writableStackTraceEnabled = true;
@@ -153,6 +156,9 @@ public class RetryConfig implements Serializable {
         private boolean failAfterMaxAttempts = false;
         private boolean writableStackTraceEnabled = true;
 
+        /**
+         * 用于获取重试时间间隔
+         */
         @Nullable
         private IntervalFunction intervalFunction;
 

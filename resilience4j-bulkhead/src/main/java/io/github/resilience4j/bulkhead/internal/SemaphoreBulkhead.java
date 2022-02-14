@@ -48,6 +48,9 @@ public class SemaphoreBulkhead implements Bulkhead {
     private static final String TAGS_MUST_NOTE_BE_NULL = "Tags must not be null";
 
     private final String name;
+    /**
+     * 信号类
+     */
     private final Semaphore semaphore;
     private final BulkheadMetrics metrics;
     private final BulkheadEventProcessor eventProcessor;

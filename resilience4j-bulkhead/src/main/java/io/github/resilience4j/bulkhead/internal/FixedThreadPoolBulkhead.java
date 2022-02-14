@@ -50,8 +50,17 @@ public class FixedThreadPoolBulkhead implements ThreadPoolBulkhead {
     private static final String TAGS_MUST_NOTE_BE_NULL = "Tags must not be null";
 
     private final String name;
+    /**
+     * 线程池执行器
+     */
     private final ThreadPoolExecutor executorService;
+    /**
+     * 监控
+     */
     private final FixedThreadPoolBulkhead.BulkheadMetrics metrics;
+    /**
+     * 事件处理器
+     */
     private final FixedThreadPoolBulkhead.BulkheadEventProcessor eventProcessor;
     private final ThreadPoolBulkheadConfig config;
     private final Map<String, String> tags;

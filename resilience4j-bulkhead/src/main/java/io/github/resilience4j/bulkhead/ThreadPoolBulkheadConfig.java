@@ -47,9 +47,21 @@ public class ThreadPoolBulkheadConfig {
         .availableProcessors();
     public static final boolean DEFAULT_WRITABLE_STACK_TRACE_ENABLED = true;
 
+    /**
+     * 线程池最大容量
+     */
     private int maxThreadPoolSize = DEFAULT_MAX_THREAD_POOL_SIZE;
+    /**
+     * 核心线程数
+     */
     private int coreThreadPoolSize = DEFAULT_CORE_THREAD_POOL_SIZE;
+    /**
+     * 队列容量
+     */
     private int queueCapacity = DEFAULT_QUEUE_CAPACITY;
+    /**
+     * 存活时间
+     */
     private Duration keepAliveDuration = DEFAULT_KEEP_ALIVE_DURATION;
     private boolean writableStackTraceEnabled = DEFAULT_WRITABLE_STACK_TRACE_ENABLED;
     private List<ContextPropagator> contextPropagators = new ArrayList<>();
